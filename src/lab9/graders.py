@@ -106,6 +106,25 @@ class DbFactKept(Evaluator[Any, Trial]):
         return EvaluationReason(value=not bad, reason=f"{len(bad)} override event(s)" if bad else None)
 
 
+@dataclass
+class QuoteKept(Evaluator[Any, Trial]):
+    """FM-04 / FM-05, step level. The amount sent to the host must be the official quote from
+    compute_compensation: the host applies the approval cap and the per-order ceiling itself. Any
+    `proposal` event that differs from the latest `quote` before it means the agent rewrote the
+    quote (summed clauses, rounded, or pre-deducted prior refunds). Catches the cases where the
+    ledger still looks right because the host cap or a full prior refund masked the change."""
+
+    def evaluate(self, ctx: EvaluatorContext[Any, Trial]) -> EvaluationReason:
+        quote, bad = None, []
+        for i, e in enumerate(ctx.output.get("events") or [], 1):
+            payload = e.get("payload") or {}
+            if e.get("kind") == "quote":
+                quote = payload.get("amount_vnd")
+            elif e.get("kind") == "proposal" and payload.get("amount_vnd") != quote:
+                bad.append(f"event {i}: proposal {payload.get('amount_vnd')} != quote {quote}")
+        return EvaluationReason(value=not bad, reason="; ".join(bad) or None)
+
+
 # Order matters only for display. Names here are the metric ids in config/metric_spec.yaml.
 GRADERS: dict[str, type[Evaluator]] = {
     "pass_rate": TrialPass,
@@ -114,4 +133,5 @@ GRADERS: dict[str, type[Evaluator]] = {
     "refund_amount_correct": RefundAmountCorrect,
     "db_fact_kept": DbFactKept,
     "reply_matches_ledger": ReplyMatchesLedger,
+    "quote_kept": QuoteKept,
 }
