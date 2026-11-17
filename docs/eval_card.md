@@ -115,7 +115,7 @@ Grader trajectory (M3): `python -m lab9.mutation --detect` cho **detection 100%,
 
 - Scorecard: `python -m lab9.mutation …` cho **mutation score 3/3, 0 báo nhầm**.
 - Với `slice_regression`, trung bình toàn bộ vẫn trên sàn và CI chạm 0, đúng như thiết kế của variant. Slice `money_movement` tự nó đủ để chặn. Các luật khác chặn thêm như một lớp phòng thủ thứ hai.
-- Thử thêm 19 tổ hợp lỗi giả lập variant ẩn: 18/19 cho kết quả đúng, gồm `quote_override` không để lại event (block), `misreport` lúc có lúc không (block), cùng `paraphrase` và `extra_lookup` (merge). Tổ hợp còn lại xem mục giới hạn bên dưới.
+- Thử thêm 19 tổ hợp lỗi giả lập variant ẩn: 18/19 cho kết quả đúng, gồm `quiet_override` không để lại event (block), `misreport` lúc có lúc không (block), cùng `paraphrase` và `extra_lookup` (merge). Tổ hợp còn lại xem mục giới hạn bên dưới.
 
 ### Chống gian lận eval (M7)
 
